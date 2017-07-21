@@ -1,13 +1,12 @@
-(ns looping-is-recursion)
+ns looping-is-recursion)
 
 (defn power [base exp]
-  (let [power-helper (fn [acc base po]
+  (let [helper (fn [acc base pow]
                  (cond
-                   (== po 0) 1
-                   (== po 1) acc
-                   :else (recur (* acc base) base (dec po))))]
+                   (== pow 0) 1
+                   (== pow 1) acc
+                   :else (recur (* acc base) base (dec pow))))]
       (helper base base exp)))
-
 
 (defn last-element [a-seq]
   (if (nil? (next a-seq))
@@ -16,8 +15,8 @@
 
 (defn seq= [seq1 seq2]
   (cond
-    (or (empty? seq1) (empty? seq2))  false
     (and (empty? seq1) (empty? seq2)) true
+    (or (empty? seq1) (empty? seq2))  false
     (not= (first seq1) (first seq2))  false
     :else (recur (rest seq1) (rest seq2))))
 
@@ -32,41 +31,41 @@
 
 (defn avg [a-seq]
   (loop [acc 0
-         nt 0
+         num-terms 0
          a-seq a-seq]
     (if (empty? a-seq)
-      (if (== nt 0)
+      (if (== num-terms 0)
         0
-        (/ acc nt))
-      (recur (+ acc (first a-seq)) (inc nt) (rest a-seq)))))
+        (/ acc num-terms))
+      (recur (+ acc (first a-seq)) (inc num-terms) (rest a-seq)))))
 
 (defn parity [a-seq]
-  (let [toggle (fn [set elem]
-                 (if(contains? set elem)
-                   (disj set elem)
-                   (conj set elem)))]
-    (loop [a-seq a-seq
-           emp #{}]
+  (let [toggle (fn [a-set elem]
+                 (if(contains? a-set elem)
+                   (disj a-set elem)
+                   (conj a-set elem)))]
+    (loop [odd-set #{}
+           a-seq a-seq]
       (if (empty? a-seq)
-          emp
-        (recur (toggle emp (first a-seq)) (rest a-seq))))))
+        odd-set
+        (recur (toggle odd-set (first a-seq)) (rest a-seq))))))
+
 
 (defn fast-fibo [n]
-  (loop [fn 0
-         fn-1 1
+  (loop [Fn-1 1
+         Fn 0
          n n]
     (if (== n 0)
-      fn
-      (recur fn (+ fn fn-1) (dec n)))))
-
+      Fn
+      (recur Fn (+ Fn Fn-1) (dec n)))))
 
 (defn cut-at-repetition [a-seq]
-  (loop [emp #{}
-         em []
+  (loop [before-cut []
+         seen #{}
          a-seq a-seq]
     (if (empty? a-seq)
-        em
-      ( (if (contains? emp elem)
-          em
-          (recur (conj em first a-seq) (conj emp first a-seq) (rest a-seq)))))))
-
+      before-cut
+      (let [elem (first a-seq)]
+        (if (contains? seen elem)
+          before-cut
+          (recur (conj before-cut elem) (conj seen elem) (rest a-seq)))))))
