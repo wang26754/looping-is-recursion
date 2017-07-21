@@ -1,4 +1,4 @@
-ns looping-is-recursion)
+(ns looping-is-recursion)
 
 (defn power [base exp]
   (let [helper (fn [acc base pow]
